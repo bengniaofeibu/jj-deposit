@@ -39,6 +39,7 @@
             width="500">
             <template slot-scope="scope">
               <el-button @click="applyRefund(scope.row)" type="text" size="small">加入退款队列</el-button>
+              <el-button @click="directlyApplyRefund(scope.row)" type="text" size="small">直接退款</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -103,6 +104,32 @@ export default {
         },
         type: this.baseC.method.post,
         url: '/order/user/refund',
+        conType: this.baseC.conType.json
+      }).then(res => {
+        console.log(res)
+        if (res.code !== 200) {
+          this.$message.error(res.message)
+          return
+        }
+        if (res.data.code !== 200) {
+          this.$message.warning(res.data.msg)
+        } else {
+          this.$message.success(res.data.msg)
+          this.query()
+        }
+      }, res => {
+        console.log(res)
+        this.$message.error('服务异常,请稍后！！！')
+      })
+    },
+    directlyApplyRefund (row) {
+      console.log(row)
+      this.publicMethods.request({
+        data: {
+          phone: row.phone
+        },
+        type: this.baseC.method.post,
+        url: '/order/user/directlyRefund',
         conType: this.baseC.conType.json
       }).then(res => {
         console.log(res)
